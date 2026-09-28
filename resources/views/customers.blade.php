@@ -1,4 +1,3 @@
 <x-layouts.app title="Customers">
-    <h1>Customers</h1>
-    <p>this is the customers page</p>
+    <livewire:customers.customer-list />
 </x-layouts.app>
