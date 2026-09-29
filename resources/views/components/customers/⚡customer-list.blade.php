@@ -14,6 +14,12 @@ new class extends Component
     public $phone = '';
     public $status = 'active';
 
+    public $successMessage = '';
+
+    public $editCustomerId = null;
+
+    public $slNo = 1;
+
     public function with()  {
         return [
             'customers'=>Customer::query()
@@ -26,15 +32,89 @@ new class extends Component
     }
 
     public function save() {
-        Customer::create([
-            'name' => $this->name,
-            'company' => $this->company,
-            'email' => $this->email,
-            'address' => $this->address,
-            'phone' => $this->phone,
-            'status' => $this->status,
-        ]);
+
+        if($this->editCustomerId) {
+
+            $customer = Customer::findOrFail($this->editCustomerId);
+
+            $customer->update([
+                'name' => $this->name,
+                'company' => $this->company,
+                'email' => $this->email,
+                'phone' => $this->phone,
+                'address' => $this->address,
+                'status' => $this->status,
+            ]);
+            
+        $this->successMessage = 'Customer Edited Successfully';
+            
+        } else {
+            $this->validate([
+                    'name' => 'required',
+                    'email' => 'nullable | email',
+                    'status' => 'required',
+                    ]);
+                    
+            Customer::create([
+                'name' => $this->name,
+                'company' => $this->company,
+                'email' => $this->email,
+                'address' => $this->address,
+                'phone' => $this->phone,
+                'status' => $this->status,
+            ]);
+
+            $this->successMessage = 'Customer added Successfully';
+
+        }
+                
+        $this->reset([
+            'name',
+            'company',
+            'email',
+            'phone',
+            'address',
+            ]);
+
     }
+
+    public function edit($customerId) {
+
+        $customer = Customer::findOrFail($customerId);
+
+        $this->editCustomerId = $customer->id;
+
+        $this->name = $customer->name;
+        $this->company = $customer->company;
+        $this->email = $customer->email;
+        $this->phone = $customer->phone;
+        $this->address = $customer->address;
+        $this->status = $customer->status;
+    }
+
+    public function cancelEdit() {
+        $this->reset([
+            'name',
+            'company',
+            'email',
+            'phone',
+            'address',
+            'editCustomerId',
+        ]);
+
+        $this->status = 'active';
+
+        $this->resetValidation();
+    }
+
+    public function delete($customerId) {
+        $customer = Customer::findOrFail($customerId);
+
+        $customer->delete();
+
+        $this->successMessage = 'Customer deleted successfully.';
+    }
+
 };
 ?>
 
@@ -48,7 +128,13 @@ new class extends Component
         class="w-full border rounded-lg px-4 py-2 mb-6" />
 
         <div class="bg-white p-6 rounded-lg shadow mb-6">
-            <h2 class="text-xl font-semibold mb-4">Add Customer</h2>
+            <h2 class="text-xl font-semibold mb-4">{{$editCustomerId ? 'Edit Customer' : 'Add Customer'}}</h2>
+
+            @if ($successMessage)
+                <div class="bg-green-100 text-green-800 px-4 py-3 rounded-lg mb-4">
+                    {{ $successMessage }}
+                </div>
+            @endif
 
             <form wire:submit="save" class="space-y-4">
 
@@ -60,6 +146,9 @@ new class extends Component
                         class="w-full border rounded-lg px-4 py-2"
                         placeholder="Enter customer name"
                     >
+                    @error('name')
+                        <p class="text-red-600 text-sm mt-1">{{$message}}</p>
+                    @enderror
                 </div>
 
                 <div>
@@ -80,6 +169,9 @@ new class extends Component
                         class="w-full border rounded-lg px-4 py-2"
                         placeholder="Enter email address"
                     >
+                    @error('email')
+                        <p class="text-red-600 text-sm mt-1">{{$message}}</p>
+                    @enderror
                 </div>
 
                 <div>
@@ -104,16 +196,29 @@ new class extends Component
                 <div>
                     <label class="block mb-1 font-medium">Status</label>
                     <select wire:model="status" class="w-full border rounded-lg px-4 py-2">
+                        {{-- <option default value="">Select...</option> --}}
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
                     </select>
+                    @error('status')
+                        <p class="text-red-600 text-sm mt-1">{{$message}}</p>
+                    @enderror
                 </div>
 
+                @if ($editCustomerId)
+                    <button
+                        type="button"
+                        wire:click="cancelEdit"
+                        class="bg-gray-500 text-white px-5 py-2 rounded-lg hover:bg-gray-600"
+                    >
+                    Cancel
+                    </button>
+                @endif
                 <button
                     type="submit"
                     class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700"
                 >
-                    Add Customer
+                    {{ $editCustomerId ? 'Edit Customer' : 'Add Customer' }}
                 </button>
 
             </form>
@@ -122,23 +227,41 @@ new class extends Component
         <table class="w-full bg-white rounded-lg shadow overflow-hidden">
             <thead class="bg-gray-100">
                 <tr>
+                    <th class="text-left px-4 py-3">Sl. No.</th>
                     <th class="text-left px-4 py-3">Name</th>
                     <th class="text-left px-4 py-3">Company</th>
                     <th class="text-left px-4 py-3">Email</th>
                     <th class="text-left px-4 py-3">Address</th>
                     <th class="text-left px-4 py-3">Phone</th>
                     <th class="text-left px-4 py-3">Status</th>
+                    <th class="text-left px-4 py-3">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($customers as $customer)
                     <tr class="border-t">
+                        <td class="px-4 py-3">{{$slNo++}}</td>
                         <td class="px-4 py-3">{{$customer->name}}</td>
                         <td class="px-4 py-3">{{$customer->company}}</td>
                         <td class="px-4 py-3">{{$customer->email}}</td>
                         <td class="px-4 py-3">{{$customer->address}}</td>
                         <td class="px-4 py-3">{{$customer->phone}}</td>
                         <td class="px-4 py-3">{{$customer->status}}</td>
+                        <td class="px-4 py-3">
+                            <button
+                                type='button'
+                                wire:click="edit({{ $customer->id }})"
+                                class="text-blue-600 hover:text-blue-800 font-medium px-2">
+                                Edit
+                            </button>
+                            <button
+                                type='button'
+                                wire:click="delete({{ $customer->id }})"
+                                wire:confirm="Are you sure you want to delete this customer?"
+                                class="text-red-600 hover:text-red-800 font-medium px-2">
+                                Delete
+                            </button>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
