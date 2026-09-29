@@ -2,9 +2,12 @@
 
 use App\Models\Customer;
 use Livewire\Component;
+use Livewire\WithPagination;
 
-new class extends Component
-{
+new class extends Component {
+
+    use WithPagination;
+
     public $search = '';
 
     public $name = '';
@@ -27,8 +30,12 @@ new class extends Component
             ->orWhere('company','like','%' . $this->search . '%')
             ->orWhere('email','like','%' . $this->search . '%')
             ->orWhere('phone','like','%' . $this->search . '%')
-            ->get(),
+            ->paginate(10),
         ];
+    }
+
+    public function updatedSearch() {
+        $this->resetPage();
     }
 
     public function save() {
@@ -75,10 +82,14 @@ new class extends Component
             'phone',
             'address',
             ]);
+        
+        $this->status = 'active';
 
     }
 
     public function edit($customerId) {
+
+        $this->successMessage = '';
 
         $customer = Customer::findOrFail($customerId);
 
@@ -108,6 +119,9 @@ new class extends Component
     }
 
     public function delete($customerId) {
+
+        $this->successMessage = '';
+
         $customer = Customer::findOrFail($customerId);
 
         $customer->delete();
@@ -145,7 +159,7 @@ new class extends Component
                         wire:model="name"
                         class="w-full border rounded-lg px-4 py-2"
                         placeholder="Enter customer name"
-                    >
+                    />
                     @error('name')
                         <p class="text-red-600 text-sm mt-1">{{$message}}</p>
                     @enderror
@@ -158,7 +172,7 @@ new class extends Component
                         wire:model="company"
                         class="w-full border rounded-lg px-4 py-2"
                         placeholder="Enter company name"
-                    >
+                    />
                 </div>
 
                 <div>
@@ -168,7 +182,7 @@ new class extends Component
                         wire:model="email"
                         class="w-full border rounded-lg px-4 py-2"
                         placeholder="Enter email address"
-                    >
+                    />
                     @error('email')
                         <p class="text-red-600 text-sm mt-1">{{$message}}</p>
                     @enderror
@@ -181,7 +195,7 @@ new class extends Component
                         wire:model="phone"
                         class="w-full border rounded-lg px-4 py-2"
                         placeholder="Enter phone number"
-                    >
+                    />
                 </div>
 
                 <div>
@@ -238,15 +252,25 @@ new class extends Component
                 </tr>
             </thead>
             <tbody>
-                @foreach ($customers as $customer)
-                    <tr class="border-t">
-                        <td class="px-4 py-3">{{$slNo++}}</td>
-                        <td class="px-4 py-3">{{$customer->name}}</td>
-                        <td class="px-4 py-3">{{$customer->company}}</td>
-                        <td class="px-4 py-3">{{$customer->email}}</td>
+                @forelse ( $customers as $customer )
+                <tr class="border-t">
+                    <td class="px-4 py-3">{{$slNo++}}</td>
+                    <td class="px-4 py-3">{{$customer->name}}</td>
+                    <td class="px-4 py-3">{{$customer->company}}</td>
+                    <td class="px-4 py-3">{{$customer->email}}</td>
                         <td class="px-4 py-3">{{$customer->address}}</td>
                         <td class="px-4 py-3">{{$customer->phone}}</td>
-                        <td class="px-4 py-3">{{$customer->status}}</td>
+                        <td class="px-4 py-3">
+                            @if ($customer->status === 'active')
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700">
+                                    Active
+                                </span>
+                            @else
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-700">
+                                    Inactive
+                                </span>
+                            @endif
+</td>
                         <td class="px-4 py-3">
                             <button
                                 type='button'
@@ -255,16 +279,22 @@ new class extends Component
                                 Edit
                             </button>
                             <button
-                                type='button'
-                                wire:click="delete({{ $customer->id }})"
-                                wire:confirm="Are you sure you want to delete this customer?"
-                                class="text-red-600 hover:text-red-800 font-medium px-2">
-                                Delete
-                            </button>
+                            type='button'
+                            wire:click="delete({{ $customer->id }})"
+                            wire:confirm="Are you sure you want to delete this customer?"
+                            class="text-red-600 hover:text-red-800 font-medium px-2">
+                            Delete
+                        </button>
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="7" class="text-center py-8 text-gray-500">
+                            No customers found.
+                        </td>
+                    </tr>   
+                @endforelse
             </tbody>
         </table>
-
+        <div class="mt-4">{{ $customers->links() }}</div>
 </div>
