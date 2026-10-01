@@ -132,14 +132,14 @@ new class extends Component {
 };
 ?>
 
-<div>
+<div class="items-start justify-items-start">
     <h1 class='text-2xl font-bold mb-4'>Customers</h1>
 
     <input
         type='text'
         wire:model.live='search'
         placeholder='Search for customers...'
-        class="w-full border rounded-lg px-4 py-2 mb-6" />
+        class="w-md border rounded-lg px-4 py-2 mb-6" />
 
         <div class="bg-white p-6 rounded-lg shadow mb-6">
             <h2 class="text-xl font-semibold mb-4">{{$editCustomerId ? 'Edit Customer' : 'Add Customer'}}</h2>
@@ -150,14 +150,14 @@ new class extends Component {
                 </div>
             @endif
 
-            <form wire:submit="save" class="space-y-4">
+            <form wire:submit="save" class="w-md shadow border-2 border-blue-600 bg-gray-50 rounded-lg p-3 space-y-4">
 
                 <div>
                     <label class="block mb-1 font-medium">Name</label>
                     <input
                         type="text"
                         wire:model="name"
-                        class="w-full border rounded-lg px-4 py-2"
+                        class="w-full bg-white border rounded-lg px-4 py-2"
                         placeholder="Enter customer name"
                     />
                     @error('name')
@@ -170,7 +170,7 @@ new class extends Component {
                     <input
                         type="text"
                         wire:model="company"
-                        class="w-full border rounded-lg px-4 py-2"
+                        class="w-full bg-white border rounded-lg px-4 py-2"
                         placeholder="Enter company name"
                     />
                 </div>
@@ -180,7 +180,7 @@ new class extends Component {
                     <input
                         type="email"
                         wire:model="email"
-                        class="w-full border rounded-lg px-4 py-2"
+                        class="w-full bg-white border rounded-lg px-4 py-2"
                         placeholder="Enter email address"
                     />
                     @error('email')
@@ -193,7 +193,7 @@ new class extends Component {
                     <input
                         type="text"
                         wire:model="phone"
-                        class="w-full border rounded-lg px-4 py-2"
+                        class="w-full bg-white border rounded-lg px-4 py-2"
                         placeholder="Enter phone number"
                     />
                 </div>
@@ -202,14 +202,14 @@ new class extends Component {
                     <label class="block mb-1 font-medium">Address</label>
                     <textarea
                         wire:model="address"
-                        class="w-full border rounded-lg px-4 py-2"
+                        class="w-full bg-white border rounded-lg px-4 py-2"
                         placeholder="Enter address"
                     ></textarea>
                 </div>
 
                 <div>
                     <label class="block mb-1 font-medium">Status</label>
-                    <select wire:model="status" class="w-full border rounded-lg px-4 py-2">
+                    <select wire:model="status" class="w-full bg-white border rounded-lg px-4 py-2">
                         {{-- <option default value="">Select...</option> --}}
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
@@ -270,7 +270,7 @@ new class extends Component {
                                     Inactive
                                 </span>
                             @endif
-</td>
+                        </td>
                         <td class="px-4 py-3">
                             <button
                                 type='button'

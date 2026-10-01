@@ -1,4 +1,3 @@
 <x-layouts.app title="Leads">
-    <h1>Leads Management</h1>
-    <p>This is the leads management page</p>
+    <livewire:leads.lead-list />
 </x-layouts.app>

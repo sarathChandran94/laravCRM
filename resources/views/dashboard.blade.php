@@ -1,4 +1,3 @@
 <x-layouts.app title="Dashboard">
-    <h1>CRM Dashboard</h1>
-    <p>Welcome to Laravel CRM</p>
+    <livewire:dashboard.dashboard-stats />
 </x-layouts.app>
