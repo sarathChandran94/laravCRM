@@ -184,12 +184,6 @@ new class extends Component {
 <div class="items-start justify-items-start">
     <h1 class='text-2xl font-bold mb-4'>Leads</h1>
 
-    <input
-        type='text'
-        wire:model.live='search'
-        placeholder='Search for leads...'
-        class="w-md border rounded-lg px-4 py-2 mb-6" 
-    />
 
     <div class="bg-white p-6 rounded-lg shadow mb-6">
             <h2 class="text-xl font-semibold mb-4">Add Lead</h2>
@@ -315,6 +309,14 @@ new class extends Component {
         </form>
     </div>
 
+    <div class="p-3">
+        <input
+        type='text'
+        wire:model.live='search'
+        placeholder='Search for leads...'
+        class="w-md border rounded-lg px-4 py-2 mb-6" 
+    />
+    </div>
     <table class="w-full bg-white rounded-lg shadow overflow-hidden">
         <thead class="bg-gray-100">
             <tr>
