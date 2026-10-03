@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Deal;
 
 class Customer extends Model
 {
@@ -14,4 +15,8 @@ class Customer extends Model
         'address',
         'status',
     ];
+
+    public function deals() {
+        return $this->hasMany(Deal::class);
+    }
 }

@@ -9,9 +9,10 @@
     <header>
         <h2>Laravel CRM</h2>
         <nav class="flex items-start gap-2 p-1">
-            <a class="rounded text-blue-400 active:outline-3 outline-offset-2 outline-double" href="{{route('dashboard')}}"> Dashboard </a>
+            <a class="rounded text-blue-400" href="{{route('dashboard')}}"> Dashboard </a>
             <a class="rounded text-blue-400" href="{{route('customers')}}"> Customers </a>
             <a class="rounded text-blue-400" href="{{route('leads')}}"> Leads </a>
+            <a class="rounded text-blue-400" href="{{route('deals')}}"> Deals </a>
         </nav>
     </header>
 
