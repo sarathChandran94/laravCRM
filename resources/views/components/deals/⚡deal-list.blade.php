@@ -107,7 +107,6 @@ public function delete($dealId) {
         return [
             'deals' => Deal::with('customer')->latest()->get(),
             'customers' => Customer::orderBy('name')->get(),
-
         ];
     }
 };
@@ -122,142 +121,156 @@ public function delete($dealId) {
                 {{ $successMessage }}
             </div>
         @endif
+{{-- shadow border-2 border-blue-600 bg-gray-50 rounded-lg p-3 space-y-4 --}}
+        <div class="bg-white rounded-xl shadow-sm border p-6 mb-8 w-md ">
+            <form wire:submit="save" >
 
-        <div class="mb-6">
-            <label for="customer_id" class="block text-sm font-medium mb-2">
-                Customer
-            </label>
+                <div class="mb-6">
+                    <h2 class="text-xl font-semibold">
+                        {{ $editDealId ? 'Edit Deal' : 'Create New Deal' }}
+                    </h2>
 
-            <select
-                id="customer_id"
-                wire:model="customer_id"
-                class="w-full border rounded-lg px-3 py-2"
-            >
-                <option value="">Select Customer</option>
+                    <p class="text-sm text-gray-500 mt-1">
+                        {{ $editDealId ? 'Update the details of this deal.' : 'Add a new sales opportunity.' }}
+                    </p>
+                </div>
 
-                @foreach ($customers as $customer)
-                    <option value="{{ $customer->id }}">
-                        {{ $customer->name }}
-                    </option>
-                @endforeach
-            </select>
-            @error('customer_id')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-            @enderror
+                <div class="mb-6">
+                    <label for="customer_id" class="block text-sm font-medium mb-2">
+                        Customer
+                    </label>
+
+                    <select
+                        id="customer_id"
+                        wire:model="customer_id"
+                        class="bg-white w-full border rounded-lg px-3 py-2"
+                    >
+                        <option value="">Select Customer</option>
+
+                        @foreach ($customers as $customer)
+                            <option value="{{ $customer->id }}">
+                                {{ $customer->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('customer_id')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="mb-6">
+                    <label for="title" class="block text-sm font-medium mb-2">
+                        Deal Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="title"
+                        wire:model="title"
+                        class="bg-white w-full border rounded-lg px-3 py-2"
+                        placeholder="Enter deal title"
+                    >
+                    @error('title')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="mb-6">
+                    <label for="amount" class="block text-sm font-medium mb-2">
+                        Amount
+                    </label>
+
+                    <input
+                        type="number"
+                        id="amount"
+                        wire:model="amount"
+                        step="0.01"
+                        min="0"
+                        class="bg-white w-full border rounded-lg px-3 py-2"
+                        placeholder="Enter deal amount"
+                    >
+                    @error('amount')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="mb-6">
+                    <label for="stage" class="block text-sm font-medium mb-2">
+                        Stage
+                    </label>
+
+                    <select
+                        id="stage"
+                        wire:model="stage"
+                        class="bg-white w-full border rounded-lg px-3 py-2"
+                    >
+                        <option value="">Select Stage</option>
+                        <option value="prospecting">Prospecting</option>
+                        <option value="qualification">Qualification</option>
+                        <option value="proposal">Proposal</option>
+                        <option value="negotiation">Negotiation</option>
+                        <option value="closed_won">Closed Won</option>
+                        <option value="closed_lost">Closed Lost</option>
+                    </select>
+                    @error('stage')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="mb-6">
+                    <label for="expected_close_date" class="block text-sm font-medium mb-2">
+                        Expected Close Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="expected_close_date"
+                        wire:model="expected_close_date"
+                        class="bg-white w-full border rounded-lg px-3 py-2"
+                    >
+                    @error('expected_close_date')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="mb-6">
+                    <label for="notes" class="block text-sm font-medium mb-2">
+                        Notes
+                    </label>
+
+                    <textarea
+                        id="notes"
+                        wire:model="notes"
+                        rows="4"
+                        class="bg-white w-full border rounded-lg px-3 py-2"
+                        placeholder="Add notes about this deal"
+                    ></textarea>
+                    @error('notes')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <button
+                    type="submit"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                >
+                    {{ $editDealId ? 'Edit Deal' : 'Save Deal' }}
+                </button>
+
+                @if ($editDealId)
+                    <button
+                        type="button"
+                        wire:click="cancelEdit"
+                        class="px-4 py-2 bg-gray-500 text-white rounded-lg"
+                    >
+                        Cancel
+                    </button>
+                @endif
+            </form>
         </div>
-
-        <div class="mb-6">
-            <label for="title" class="block text-sm font-medium mb-2">
-                Deal Title
-            </label>
-
-            <input
-                type="text"
-                id="title"
-                wire:model="title"
-                class="w-full border rounded-lg px-3 py-2"
-                placeholder="Enter deal title"
-            >
-            @error('title')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <div class="mb-6">
-            <label for="amount" class="block text-sm font-medium mb-2">
-                Amount
-            </label>
-
-            <input
-                type="number"
-                id="amount"
-                wire:model="amount"
-                step="0.01"
-                min="0"
-                class="w-full border rounded-lg px-3 py-2"
-                placeholder="Enter deal amount"
-            >
-            @error('amount')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <div class="mb-6">
-            <label for="stage" class="block text-sm font-medium mb-2">
-                Stage
-            </label>
-
-            <select
-                id="stage"
-                wire:model="stage"
-                class="w-full border rounded-lg px-3 py-2"
-            >
-                <option value="">Select Stage</option>
-                <option value="prospecting">Prospecting</option>
-                <option value="qualification">Qualification</option>
-                <option value="proposal">Proposal</option>
-                <option value="negotiation">Negotiation</option>
-                <option value="closed_won">Closed Won</option>
-                <option value="closed_lost">Closed Lost</option>
-            </select>
-            @error('stage')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <div class="mb-6">
-            <label for="expected_close_date" class="block text-sm font-medium mb-2">
-                Expected Close Date
-            </label>
-
-            <input
-                type="date"
-                id="expected_close_date"
-                wire:model="expected_close_date"
-                class="w-full border rounded-lg px-3 py-2"
-            >
-            @error('expected_close_date')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <div class="mb-6">
-            <label for="notes" class="block text-sm font-medium mb-2">
-                Notes
-            </label>
-
-            <textarea
-                id="notes"
-                wire:model="notes"
-                rows="4"
-                class="w-full border rounded-lg px-3 py-2"
-                placeholder="Add notes about this deal"
-            ></textarea>
-            @error('notes')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <button
-            type="button"
-            wire:click="save"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg"
-        >
-            {{ $editDealId ? 'Edit Deal' : 'Save Deal' }}
-        </button>
-
-        @if ($editDealId)
-            <button
-                type="button"
-                wire:click="cancelEdit"
-                class="px-4 py-2 bg-gray-500 text-white rounded-lg"
-            >
-                Cancel
-            </button>
-        @endif
         
         <div class="overflow-x-auto">
-            <h2 class="text-2xl font-medium mb-6">Recent Deals</h2>
+            <h2 class="text-2xl font-medium mb-6 py-3">Recent Deals</h2>
             <table class="w-full border-collapse">
                 <thead>
                     <tr class="border-b">
