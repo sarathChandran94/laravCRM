@@ -48,6 +48,8 @@ new class extends Component {
     
     public function save() {
 
+        $this->successMessage = '';
+
     if ($this->editLeadId) {
         
         $lead = Lead::findOrFail($this->editLeadId);
@@ -151,31 +153,34 @@ new class extends Component {
     }
 
     public function leadToCustomer($id) {
+
+         $this->successMessage = '';
     
-            $lead = Lead::findOrFail($id);
-            if ($lead->status === "converted") {
+        $lead = Lead::findOrFail($id);
 
-                $this->successMessage = 'Lead already converted to Customer';
-                return;
+        if ($lead->status === "converted") {
 
-            }
-            DB::transaction(function() use ($lead){
+            $this->successMessage = 'Lead already converted to Customer';
+            return;
 
+        }
+
+        DB::transaction(function() use ($lead){
+
+            Customer::create([
+                'name'=> $lead->name,
+                'company'=> $lead->company,
+                'email'=> $lead->email,
+                'phone'=> $lead->phone,
+            ]);
+    
+            $lead->update([
+                "status" => "converted",
+            ]);
+    
+            $this->successMessage = 'Lead successfuly converted to Customer';
                 
-                Customer::create([
-                    'name'=> $lead->name,
-                    'company'=> $lead->company,
-                    'email'=> $lead->email,
-                    'phone'=> $lead->phone,
-                ]);
-    
-                $lead->update([
-                    "status" => "converted",
-                ]);
-    
-                $this->successMessage = 'Lead successfuly converted to Customer';
-                
-            });
+        });
         
     }
 };
@@ -397,6 +402,6 @@ new class extends Component {
                 </tr>
             @endforelse
         </tbody>
+        <div class="mt-4">{{ $leads->links() }}</div>
     </table>
-    <div class="mt-4">{{ $leads->links() }}</div>
 </div>

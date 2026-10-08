@@ -145,8 +145,12 @@ new class extends Component {
             <h2 class="text-xl font-semibold mb-4">{{$editCustomerId ? 'Edit Customer' : 'Add Customer'}}</h2>
 
             @if ($successMessage)
-                <div class="bg-green-100 text-green-800 px-4 py-3 rounded-lg mb-4">
-                    {{ $successMessage }}
+                <div 
+                    x-data="{ show: true }"
+                    x-init="setTimeout(() => show = false, 3000)"
+                    x-show="show"
+                    class="bg-green-100 text-green-800 px-4 py-3 rounded-lg mb-4">
+                        {{ $successMessage }}
                 </div>
             @endif
 
@@ -295,6 +299,6 @@ new class extends Component {
                     </tr>   
                 @endforelse
             </tbody>
+            <div class="mt-4">{{ $customers->links() }}</div>
         </table>
-        <div class="mt-4">{{ $customers->links() }}</div>
 </div>

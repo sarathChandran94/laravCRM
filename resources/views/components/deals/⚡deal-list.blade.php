@@ -3,19 +3,28 @@
 use Livewire\Component;
 use App\Models\Customer;
 use App\Models\Deal;
+use Livewire\WithPagination;
+
 
 new class extends Component {
 
-public $customer_id = "";
-public $title = "";
-public $amount = "";
-public $stage = "";
-public $expected_close_date = "";
-public $notes = "";
-public $editDealId = null;
-public $successMessage = "";
+    use WithPagination;
+
+    public $search = "";
+    public $stageFilter = "";
+    public $customer_id = "";
+    public $title = "";
+    public $amount = "";
+    public $stage = "";
+    public $expected_close_date = "";
+    public $notes = "";
+    public $editDealId = null;
+    public $successMessage = "";
 
     public function save() {
+
+        $this->successMessage = "";
+
         $this->validate([
             'customer_id' => 'required|exists:customers,id',
             'title' => 'required|string|max:255',
@@ -66,6 +75,8 @@ public $successMessage = "";
 
 public function edit($dealId)
 {
+    $this->successMessage = "";
+
     $deal = Deal::findOrFail($dealId);
 
     $this->editDealId = $deal->id;
@@ -95,6 +106,9 @@ public function cancelEdit()
 }
 
 public function delete($dealId) {
+
+    $this->successMessage = "";
+
     $deal = Deal::findOrFail($dealId);
 
     $deal->delete();
@@ -102,10 +116,40 @@ public function delete($dealId) {
     $this->successMessage = 'Deal deleted successfully.';
 }
 
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedStageFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function clearFilters()
+    {
+        $this->search = "";
+        $this->stageFilter = "";
+
+        $this->resetPage();
+    }
+
     public function with() {
 
         return [
-            'deals' => Deal::with('customer')->latest()->get(),
+            'deals' => Deal::with('customer')
+            ->where(function ($query) {
+                $query->where('title', 'like', '%' . $this->search . '%')
+            ->orWhere('stage', 'like', '%' . $this->search . '%')
+            ->orWhereHas('customer', function ($customerQuery) {
+                $customerQuery->where('name', 'like', '%' . $this->search . '%');
+                });
+            })
+            ->when($this->stageFilter, function ($query) {
+                $query->where('stage', $this->stageFilter);
+            })
+            ->latest()
+            ->paginate(5),
             'customers' => Customer::orderBy('name')->get(),
         ];
     }
@@ -117,8 +161,9 @@ public function delete($dealId) {
         <h1 class="text-2xl font-bold mb-6">Deals</h1>
 
         @if ($successMessage)
-            <div class="mb-6 rounded-lg bg-green-100 px-4 py-3 text-green-800">
-                {{ $successMessage }}
+            <div 
+                class="mb-6 rounded-lg bg-green-100 px-4 py-3 text-green-800">
+                    {{ $successMessage }}
             </div>
         @endif
 {{-- shadow border-2 border-blue-600 bg-gray-50 rounded-lg p-3 space-y-4 --}}
@@ -254,7 +299,7 @@ public function delete($dealId) {
                     type="submit"
                     class="px-4 py-2 bg-blue-600 text-white rounded-lg"
                 >
-                    {{ $editDealId ? 'Edit Deal' : 'Save Deal' }}
+                    {{ $editDealId ? 'Update Deal' : 'Save Deal' }}
                 </button>
 
                 @if ($editDealId)
@@ -271,6 +316,33 @@ public function delete($dealId) {
         
         <div class="overflow-x-auto">
             <h2 class="text-2xl font-medium mb-6 py-3">Recent Deals</h2>
+            <div class="mb-6 flex flex-col gap-3">
+                <input
+                    type="text"
+                    wire:model.live="search"
+                    placeholder="Search deals..."
+                    class="w-md border rounded-lg px-4 py-2 mb-6"
+                >
+                <select
+                    wire:model.live="stageFilter"
+                    class="w-md border rounded-lg px-3 py-2"
+                >
+                    <option value="">All Stages</option>
+                    <option value="prospecting">Prospecting</option>
+                    <option value="qualification">Qualification</option>
+                    <option value="proposal">Proposal</option>
+                    <option value="negotiation">Negotiation</option>
+                    <option value="closed_won">Closed Won</option>
+                    <option value="closed_lost">Closed Lost</option>
+                </select>
+                <button
+                    type="button"
+                    wire:click="clearFilters"
+                    class="w-md px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+                >
+                    Clear
+                </button>
+            </div>
             <table class="w-full border-collapse">
                 <thead>
                     <tr class="border-b">
@@ -344,6 +416,9 @@ public function delete($dealId) {
                         </tr>
                     @endforelse
                 </tbody>
+                <div class="mt-6">
+                    {{ $deals->links() }}
+                </div>
             </table>
         </div>
     </div>
