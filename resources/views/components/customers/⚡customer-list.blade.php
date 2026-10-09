@@ -132,7 +132,7 @@ new class extends Component {
 };
 ?>
 
-<div class="items-start justify-items-start">
+<div class=" justify-items-start">
     <h1 class='text-2xl font-bold mb-4'>Customers</h1>
 
     <input
@@ -145,12 +145,8 @@ new class extends Component {
             <h2 class="text-xl font-semibold mb-4">{{$editCustomerId ? 'Edit Customer' : 'Add Customer'}}</h2>
 
             @if ($successMessage)
-                <div 
-                    x-data="{ show: true }"
-                    x-init="setTimeout(() => show = false, 3000)"
-                    x-show="show"
-                    class="bg-green-100 text-green-800 px-4 py-3 rounded-lg mb-4">
-                        {{ $successMessage }}
+                <div class="bg-green-100 text-green-800 px-4 py-3 rounded-lg mb-4">
+                    {{ $successMessage }}
                 </div>
             @endif
 
