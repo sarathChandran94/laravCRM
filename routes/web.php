@@ -35,4 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/admin/users', 'admin.user-list')
         ->middleware('admin')
         ->name('admin.users');
+
+    Route::livewire('/customers/{customer}', 'customers.customer-details')
+        ->name('customers.show');
 });
