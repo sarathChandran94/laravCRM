@@ -32,6 +32,17 @@
                     <li><a class="rounded text-blue-400" href="{{route('customers')}}"> Customers </a></li>
                     <li><a class="rounded text-blue-400" href="{{route('leads')}}"> Leads </a></li>
                     <li><a class="rounded text-blue-400" href="{{route('deals')}}"> Deals </a></li>
+                    <li>
+                        @if (auth()->user()->isAdmin())
+                            <a
+                                href="{{ route('admin.users') }}"
+                                wire:navigate
+                                class="text-sm font-medium text-gray-700 hover:text-indigo-600"
+                            >
+                                Manage Users
+                            </a>
+                        @endif
+                    </li>
                 </ul>
             </div>
         @endif

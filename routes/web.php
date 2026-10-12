@@ -31,4 +31,8 @@ Route::middleware('auth')->group(function () {
 
         return redirect()->route('login');
     })->name('logout');
+
+    Route::livewire('/admin/users', 'admin.user-list')
+        ->middleware('admin')
+        ->name('admin.users');
 });

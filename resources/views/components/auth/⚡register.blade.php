@@ -27,6 +27,7 @@ new class extends Component
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'role' => 'staff',
         ]);
 
         Auth::login($user);
