@@ -100,14 +100,14 @@ new class extends Component
         </p>
     </div>
     <div class="bg-white w-xs  p-6 rounded-lg shadow-md hover:shadow">
-        <h2 class="text-gray-500 text-center"> Total Deal Value </h2>
+        <h2 class="text-gray-500 text-center"> Won Deal Value </h2>
 
         <p class="text-3xl font-bold text-center">
             ₹{{ number_format($wonDealValue, 2) }}
         </p>
     </div>
     <div class="bg-white w-xs  p-6 rounded-lg shadow-md hover:shadow">
-        <h2 class="text-gray-500 text-center"> Total Deal Value </h2>
+        <h2 class="text-gray-500 text-center"> Deal Pipeline Value </h2>
         
         <p class="text-3xl font-bold text-center">
             ₹{{ number_format($pipelineValue, 2) }}

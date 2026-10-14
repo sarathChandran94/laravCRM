@@ -186,12 +186,11 @@ new class extends Component {
 };
 ?>
 
-<div class="items-start justify-items-start">
+<div class="p-3">
     <h1 class='text-2xl font-bold mb-4'>Leads</h1>
 
-
-    <div class="bg-white p-6 rounded-lg shadow mb-6">
-            <h2 class="text-xl font-semibold mb-4">Add Lead</h2>
+    <div class="bg-white rounded-xl shadow-sm border p-6 mb-8 w-md ">
+            <h2 class="text-2xl font-bold mb-4">Add Lead</h2>
 
         @if ($successMessage)
             <div class="bg-green-100 text-green-800 px-4 py-3 rounded-lg mb-4">
@@ -199,7 +198,7 @@ new class extends Component {
             </div>
         @endif
 
-        <form class="w-md shadow border-2 border-blue-600 bg-gray-50 rounded-lg p-3 space-y-4" wire:submit="save">
+        <form class="p-3 space-y-4" wire:submit="save">
 
                 <div>
                     <label class="block mb-1 font-medium">Name</label>
@@ -314,12 +313,12 @@ new class extends Component {
         </form>
     </div>
 
-    <div class="p-3">
+    <div>
         <input
         type='text'
         wire:model.live='search'
         placeholder='Search for leads...'
-        class="w-md border rounded-lg px-4 py-2 mb-6" 
+        class="w-md border rounded-lg px-4 py-2" 
     />
     </div>
     <table class="w-full bg-white rounded-lg shadow overflow-hidden">
